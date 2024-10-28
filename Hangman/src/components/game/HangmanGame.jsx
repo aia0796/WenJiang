@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Timer, Wallet, Award } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import contractAbi from "../../contracts/contractAbi.json"
+import contractAddress from "../../contracts/contractAddress.json"
+import {BrowserProvider, ethers} from "ethers"
 
 const words = ['JAVASCRIPT', 'REACT', 'BLOCKCHAIN', 'CRYPTO', 'GAMING'];
 
@@ -12,6 +15,8 @@ const HangmanGame = () => {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [tokens, setTokens] = useState(0);
   const [showClaim, setShowClaim] = useState(false);
+  const [account, setAccount] = useState('');
+
 
   // Initialize game
   useEffect(() => {
@@ -103,8 +108,33 @@ const HangmanGame = () => {
   };
 
   const handleClaim = () => {
+    withdraw();
     alert(`Claimed ${tokens} tokens!`);
     setShowClaim(false);
+  };
+
+  const withdraw = async () =>{
+    const {abi} = contractAbi;
+    const provider = new BrowserProvider(window.ethereum);
+
+    const signer = await provider.getSigner();
+    const address = await signer.getAddress();
+    const bounceContract = new ethers.Contract(contractAddress.address, abi, signer)
+
+    await (await bounceContract.mint(address, ethers.parseUnits(tokens.toString(), 18))).wait();
+  }
+
+  const connectWallet = async () => {
+    try {
+      if (window.ethereum) {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setAccount(accounts[0]);
+      } else {
+        alert('Please install MetaMask!');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // Generate keyboard
@@ -143,9 +173,9 @@ const HangmanGame = () => {
             <Timer className="text-gray-600" />
             <span>{timeElapsed}s</span>
           </div>
-          <button className="flex items-center gap-2 bg-purple-500 text-white px-4 py-2 rounded">
+          <button className="flex items-center gap-2 bg-purple-500 text-white px-4 py-2 rounded" onClick={connectWallet}>
             <Wallet />
-            Connect Wallet
+            {account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Connect Wallet'}
           </button>
         </div>
       </div>
