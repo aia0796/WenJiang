@@ -4,6 +4,11 @@ Contract address : "0x76Dc769Ae7Ea8270dB089D0f109818c15A5782D1"
 
 [Verify here on testnet](https://testnet.aiascan.com/token/0x76Dc769Ae7Ea8270dB089D0f109818c15A5782D1)
 
+## WenJiang (Built on aia chain)
+
+- It's a play to earn game where on guessing the correct word in less attempt will lead you to earn WJT token on aia testnet
+- Simple game, guess correct otherwise the person gets hanged 💀💀
+
 ## Getting Started
 
 ### Prerequisites
